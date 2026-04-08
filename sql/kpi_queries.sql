@@ -76,112 +76,20 @@ GROUP BY event_name;
 -- Journey-based counts
 -- --------------------------------------------------
 
--- Sessions that include HOMEPAGE
-SELECT COUNT(DISTINCT session_id) AS session_count
-FROM clickstream c
-WHERE EXISTS (
-    SELECT 1
-    FROM clickstream c1
-    WHERE c1.event_name = 'HOMEPAGE'
-      AND c.session_id = c1.session_id
-);
-
--- Sessions that include HOMEPAGE and SEARCH
-SELECT COUNT(DISTINCT session_id) AS session_count
-FROM clickstream c
-WHERE EXISTS (
-    SELECT 1
-    FROM clickstream c1
-    WHERE c1.event_name = 'HOMEPAGE'
-      AND c.session_id = c1.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c2
-    WHERE c2.event_name = 'SEARCH'
-      AND c.session_id = c2.session_id
-);
-
--- Sessions that include HOMEPAGE, SEARCH and ITEM_DETAIL
-SELECT COUNT(DISTINCT session_id) AS session_count
-FROM clickstream c
-WHERE EXISTS (
-    SELECT 1
-    FROM clickstream c1
-    WHERE c1.event_name = 'HOMEPAGE'
-      AND c.session_id = c1.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c2
-    WHERE c2.event_name = 'SEARCH'
-      AND c.session_id = c2.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c3
-    WHERE c3.event_name = 'ITEM_DETAIL'
-      AND c.session_id = c3.session_id
-);
-
--- Sessions that include HOMEPAGE, SEARCH, ITEM_DETAIL and ADD_TO_CART
-SELECT COUNT(DISTINCT session_id) AS session_count
-FROM clickstream c
-WHERE EXISTS (
-    SELECT 1
-    FROM clickstream c1
-    WHERE c1.event_name = 'HOMEPAGE'
-      AND c.session_id = c1.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c2
-    WHERE c2.event_name = 'SEARCH'
-      AND c.session_id = c2.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c3
-    WHERE c3.event_name = 'ITEM_DETAIL'
-      AND c.session_id = c3.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c4
-    WHERE c4.event_name = 'ADD_TO_CART'
-      AND c.session_id = c4.session_id
-);
-
--- Sessions that include HOMEPAGE, SEARCH, ITEM_DETAIL, ADD_TO_CART and BOOKING
-SELECT COUNT(DISTINCT session_id) AS session_count
-FROM clickstream c
-WHERE EXISTS (
-    SELECT 1
-    FROM clickstream c1
-    WHERE c1.event_name = 'HOMEPAGE'
-      AND c.session_id = c1.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c2
-    WHERE c2.event_name = 'SEARCH'
-      AND c.session_id = c2.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c3
-    WHERE c3.event_name = 'ITEM_DETAIL'
-      AND c.session_id = c3.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c4
-    WHERE c4.event_name = 'ADD_TO_CART'
-      AND c.session_id = c4.session_id
-)
-AND EXISTS (
-    SELECT 1
-    FROM clickstream c5
-    WHERE c5.event_name = 'BOOKING'
-      AND c.session_id = c5.session_id
-);
+WITH session_event_flags AS (
+  SELECT session_id,
+	  MAX(CASE WHEN event_name = 'HOMEPAGE' THEN 1 ELSE 0 END) AS has_homepage,
+	  MAX(CASE WHEN event_name = 'SEARCH' THEN 1 ELSE 0 END) AS has_search,
+	  MAX(CASE WHEN event_name = 'ITEM_DETAIL' THEN 1 ELSE 0 END) AS has_item_detail,
+	  MAX(CASE WHEN event_name = 'ADD_TO_CART' THEN 1 ELSE 0 END) AS has_add_to_cart,
+	  MAX(CASE WHEN event_name = 'BOOKING' THEN 1 ELSE 0 END) AS has_booking
+  FROM clickstream
+  GROUP BY session_id
+  )
+SELECT
+	SUM(CASE WHEN session_event_flags.has_homepage = 1 THEN 1 ELSE 0 END) AS step_1,
+	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 THEN 1 ELSE 0 END) AS step_2,
+	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 THEN 1 ELSE 0 END) AS step_3,
+	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 AND session_event_flags.has_add_to_cart = 1 THEN 1 ELSE 0 END) AS step_4,
+	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 AND session_event_flags.has_add_to_cart = 1 AND session_event_flags.has_booking = 1 THEN 1 ELSE 0 END) AS step_5
+FROM session_event_flags;
