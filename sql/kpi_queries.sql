@@ -37,10 +37,7 @@ ORDER BY month;
 -- ==================================================
 
 -- Revenue by product category
-SELECT 
-    p.master_category,
-    SUM(x.total_amount)::NUMERIC AS revenue
-FROM (
+WITH transactions_with_product_id  AS (
     SELECT 
         t.*,
         REPLACE(
@@ -51,9 +48,13 @@ FROM (
             '''item_price''', '"item_price"'
         )::json->0->>'product_id' AS product_id
     FROM transactions t
-) x
+)
+SELECT
+	p.master_category,
+    SUM(transactions_with_product_id .total_amount)::NUMERIC AS revenue
+FROM transactions_with_product_id 
 INNER JOIN product p
-    ON p.id = x.product_id::INT
+ON p.id = transactions_with_product_id .product_id::INT
 GROUP BY p.master_category
 ORDER BY revenue DESC;
 
