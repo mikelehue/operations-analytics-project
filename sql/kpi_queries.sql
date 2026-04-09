@@ -77,19 +77,46 @@ GROUP BY event_name;
 -- --------------------------------------------------
 
 WITH session_event_flags AS (
-  SELECT session_id,
-	  MAX(CASE WHEN event_name = 'HOMEPAGE' THEN 1 ELSE 0 END) AS has_homepage,
-	  MAX(CASE WHEN event_name = 'SEARCH' THEN 1 ELSE 0 END) AS has_search,
-	  MAX(CASE WHEN event_name = 'ITEM_DETAIL' THEN 1 ELSE 0 END) AS has_item_detail,
-	  MAX(CASE WHEN event_name = 'ADD_TO_CART' THEN 1 ELSE 0 END) AS has_add_to_cart,
-	  MAX(CASE WHEN event_name = 'BOOKING' THEN 1 ELSE 0 END) AS has_booking
+  SELECT 
+      session_id,
+      MAX(CASE WHEN event_name = 'HOMEPAGE' THEN 1 ELSE 0 END) AS has_homepage,
+      MAX(CASE WHEN event_name = 'SEARCH' THEN 1 ELSE 0 END) AS has_search,
+      MAX(CASE WHEN event_name = 'ITEM_DETAIL' THEN 1 ELSE 0 END) AS has_item_detail,
+      MAX(CASE WHEN event_name = 'ADD_TO_CART' THEN 1 ELSE 0 END) AS has_add_to_cart,
+      MAX(CASE WHEN event_name = 'BOOKING' THEN 1 ELSE 0 END) AS has_booking
   FROM clickstream
   GROUP BY session_id
-  )
+)
+
 SELECT
-	SUM(CASE WHEN session_event_flags.has_homepage = 1 THEN 1 ELSE 0 END) AS step_1,
-	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 THEN 1 ELSE 0 END) AS step_2,
-	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 THEN 1 ELSE 0 END) AS step_3,
-	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 AND session_event_flags.has_add_to_cart = 1 THEN 1 ELSE 0 END) AS step_4,
-	SUM(CASE WHEN session_event_flags.has_homepage = 1 AND session_event_flags.has_search = 1 AND session_event_flags.has_item_detail = 1 AND session_event_flags.has_add_to_cart = 1 AND session_event_flags.has_booking = 1 THEN 1 ELSE 0 END) AS step_5
+    'HOMEPAGE' AS funnel_step,
+    SUM(CASE WHEN has_homepage = 1 THEN 1 ELSE 0 END) AS session_count
+FROM session_event_flags
+
+UNION ALL
+
+SELECT
+    'HOMEPAGE + SEARCH' AS funnel_step,
+    SUM(CASE WHEN has_homepage = 1 AND has_search = 1 THEN 1 ELSE 0 END) AS session_count
+FROM session_event_flags
+
+UNION ALL
+
+SELECT
+    'HOMEPAGE + SEARCH + ITEM_DETAIL' AS funnel_step,
+    SUM(CASE WHEN has_homepage = 1 AND has_search = 1 AND has_item_detail = 1 THEN 1 ELSE 0 END) AS session_count
+FROM session_event_flags
+
+UNION ALL
+
+SELECT
+    'HOMEPAGE + SEARCH + ITEM_DETAIL + ADD_TO_CART' AS funnel_step,
+    SUM(CASE WHEN has_homepage = 1 AND has_search = 1 AND has_item_detail = 1 AND has_add_to_cart = 1 THEN 1 ELSE 0 END) AS session_count
+FROM session_event_flags
+
+UNION ALL
+
+SELECT
+    'HOMEPAGE + SEARCH + ITEM_DETAIL + ADD_TO_CART + BOOKING' AS funnel_step,
+    SUM(CASE WHEN has_homepage = 1 AND has_search = 1 AND has_item_detail = 1 AND has_add_to_cart = 1 AND has_booking = 1 THEN 1 ELSE 0 END) AS session_count
 FROM session_event_flags;
