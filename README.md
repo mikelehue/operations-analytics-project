@@ -98,11 +98,100 @@ This indicates a high dependency on core categories, which may represent both:
 
 ---
 
-## Next Steps
+## Project Evolution: From SQL Analysis to BI Dashboard
 
-- Analyze seasonality in revenue to better understand volatility  
-- Calculate funnel conversion rates to quantify drop-offs  
-- Analyze revenue by category over time to track concentration dynamics  
-- Segment users and transactions (e.g., by acquisition channel, product category, or customer type) to identify behavioral patterns  
+After completing the initial SQL and Python analysis, a key question remained:
+
+**What is driving the increase in revenue volatility after 2021?**
+
+To answer this, the project was extended using **Power BI** to explore business behavior in a more integrated and visual way.
 
 ---
+
+## Power BI Dashboard (Iteration 2)
+
+Due to file size constraints, the `.pbix` file is not included.  
+The dashboard is presented through screenshots below.
+
+### Key components
+
+- Revenue and transactions over time
+- Average Order Value (AOV)
+- Funnel conversion over time (event-based vs journey-based)
+- Revenue by category
+
+---
+
+### Revenue & Transaction Dynamics
+
+Revenue growth closely follows transaction volume, while Average Order Value remains relatively stable over time.
+
+This suggests that **revenue growth is primarily driven by transaction volume, not pricing**.
+
+---
+
+### Funnel Behavior Insights
+
+The funnel analysis shows that most conversion steps improve over time. However, a significant drop appears at the **Product → Cart** stage.
+
+At the same time, **Cart → Booking** conversion improves.
+
+This suggests that fewer users reach the cart, but those who do are more likely to complete the purchase.
+
+---
+
+### Explaining Revenue Volatility
+
+The combination of:
+
+- reduced conversion into the cart
+- improved checkout performance
+- increasing dependence on transaction volume
+
+makes the business more sensitive to user behavior fluctuations.
+
+This helps explain the **higher revenue volatility observed after 2021**.
+
+---
+
+### Category Concentration Effect
+
+Revenue is highly concentrated in a few categories, mainly **Apparel**, followed by **Accessories** and **Footwear**.
+
+This increases business risk: any behavioral change in the main categories can have a disproportionate impact on total revenue.
+
+---
+
+## Dashboard Screenshots
+
+### Overview Dashboard
+
+![Dashboard Overview](powerbi_dashboard/dashboard_screenshot_01.png)
+
+### Funnel Analysis
+
+![Funnel Analysis](powerbi_dashboard/dashboard_screenshot_02.png)
+
+---
+
+## Final Takeaway
+
+Moving from static SQL analysis to a Power BI dashboard allowed the project to connect:
+
+- revenue dynamics
+- user behavior
+- funnel conversion
+- product category concentration
+
+This project demonstrates the ability to move from **data extraction → analysis → visualization → business interpretation**, using different tools to investigate a real operational question.
+
+---
+
+## Next Steps
+
+Based on the insights obtained from the BI dashboard, the next steps would focus on deepening the analysis and validating business hypotheses:
+
+- Analyze seasonality patterns to better understand revenue volatility drivers
+- Quantify funnel conversion changes over time, especially at the Product → Cart stage
+- Track category-level revenue dynamics over time to assess concentration risk evolution
+- Segment users and transactions (e.g., by acquisition channel, product category, or customer type) to identify behavioral patterns driving conversion differences
