@@ -187,6 +187,33 @@ This project demonstrates the ability to move from **data extraction → analysi
 
 ---
 
+## Dashboard Redesign & UX Improvements
+
+After the initial Power BI implementation, I revisited the dashboard design with a stronger focus on usability, business storytelling, and dashboard UX.
+
+This redesign iteration focused on:
+
+- Adding KPI cards to highlight the most important business metrics at first glance
+- Introducing slicers and interactive filters to improve exploration and usability
+- Improving dashboard hierarchy and layout organization
+- Using a cleaner and more business-oriented visual style
+- Increasing readability of titles, charts, and annotations
+- Making the dashboards feel less like static analysis and more like operational BI tools
+
+I also refined the Funnel Analysis page by summarizing conversion performance through aggregated funnel KPIs, allowing a faster understanding of user behavior across the purchase journey.
+
+This redesign iteration was inspired by feedback from professionals working in Data Operations and BI environments, focusing on dashboard readability, UX, and business communication.
+
+### Redesigned Business Overview Dashboard
+
+![Redesigned Business Overview](powerbi_dashboard/dashboard_page_1.png)
+
+### Redesigned Funnel Analysis Dashboard
+
+![Redesigned Funnel Analysis](powerbi_dashboard/dashboard_page_2.png)
+
+---
+
 ## Next Steps
 
 Based on the insights obtained from the BI dashboard, the next steps would focus on deepening the analysis and validating business hypotheses:
